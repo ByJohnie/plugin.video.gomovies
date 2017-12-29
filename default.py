@@ -104,7 +104,7 @@ def SHOW(url):
           #matchd = re.compile('<div class="desc">\n(.*)<').findall(data2)
           #for desc in matchd:
            finalurl = 'https://openload.co/embed/' + link
-           addLink2(title,finalurl,4,thumbnail)
+           addLink2(name,finalurl,4,thumbnail)
 
 
 #Зареждане на видео
