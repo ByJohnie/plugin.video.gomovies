@@ -82,26 +82,29 @@ def SEARCH(url):
              addDir('Върнете се назад в главното меню за да продължите','','',"DefaultFolderBack.png")
 
 def SHOW(url):
-       url = url + 'watching/?ep=6'
        req = urllib2.Request(url)
        req.add_header('User-Agent', UA)
        response = urllib2.urlopen(req)
-       data=response.read()
+       data1=response.read()
        response.close()
-       match = re.compile('<a title="(.+?)".*data-openload="(.+?)"').findall(data)
-       for tit,link in match:
-        title = name + '-КАЧЕСТВО/СЕРИЯ-' + tit
-        matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data)
-        for thumbnail in matchi:
-         matchd = re.compile('<div class="desc">\n(.*)<').findall(data)
-         for desc in matchd:
-          finalurl = 'https://openload.co/embed/' + link
-          addLink2(title,finalurl,4,desc,thumbnail)
-
-
-
-
-
+       print url
+       match1 = re.compile('<a onclick=".*" href="(https.+?)"').findall(data1)
+       for urlfind in match1:
+        print urlfind
+        req = urllib2.Request(urlfind)
+        req.add_header('User-Agent', UA)
+        response = urllib2.urlopen(req)
+        data2=response.read()
+        response.close()
+        match = re.compile('<a title="(.+?)".*data-openload="(.+?)"').findall(data2)
+        for tit,link in match:
+         title = name + '-КАЧЕСТВО/СЕРИЯ-' + tit
+         matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data2)
+         for thumbnail in matchi:
+          #matchd = re.compile('<div class="desc">\n(.*)<').findall(data2)
+          #for desc in matchd:
+           finalurl = 'https://openload.co/embed/' + link
+           addLink2(title,finalurl,4,thumbnail)
 
 
 #Зареждане на видео
@@ -139,12 +142,12 @@ def addLink(name,url,mode,iconimage):
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
 
-def addLink2(name,url,mode,plot,iconimage):
+def addLink2(name,url,mode,iconimage):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
         ok=True
         liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
         liz.setArt({ 'thumb': iconimage,'poster': iconimage, 'banner' : iconimage, 'fanart': iconimage })
-        liz.setInfo( type="Video", infoLabels={ "Title": name, "plot": plot } )
+        liz.setInfo( type="Video", infoLabels={ "Title": name } )
         liz.setProperty("IsPlayable" , "false")
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
         return ok
