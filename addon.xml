@@ -8,10 +8,10 @@
      <provides>video</provides>
  </extension>
  <extension point="xbmc.addon.metadata">
-     <summary lang="bg">Приставка за съдържание при поискване от Envymovies</summary>
-     <summary lang="en">Addon for VOD from Envymovies</summary>
-    <description lang="bg">Приставка за съдържание при поискване от Envymovies. Препоръчително е използването на широколентова интернет връзка!</description>
-     <description lang="en">Addon for watching on demand videos from Envymovies. Broadband internet connection is recomended!</description>      
+     <summary lang="bg">Приставка за съдържание при поискване от GoMovies</summary>
+     <summary lang="en">Addon for VOD from GoMovies</summary>
+    <description lang="bg">Приставка за съдържание при поискване от GoMovies. Препоръчително е използването на широколентова интернет връзка!</description>
+     <description lang="en">Addon for watching on demand videos from GoMovies. Broadband internet connection is recomended!</description>      
      <disclaimer lang="bg">Някои елементи на тази приставка, може да не са легални в държавата ви - проверете и инсталирайте на ваша отговорност.</disclaimer>
      <disclaimer lang="en">Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
      <language>bg,en</language>
