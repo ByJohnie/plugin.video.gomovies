@@ -101,10 +101,10 @@ def SHOW(url):
          title = name + '-КАЧЕСТВО/СЕРИЯ-' + tit
          matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data2)
          for thumbnail in matchi:
-          #matchd = re.compile('<div class="desc">\n(.*)<').findall(data2)
-          #for desc in matchd:
+          matchd = re.compile('<div class="desc">\n(.*)\.').findall(data2)
+          for desc in matchd:
            finalurl = 'https://openload.co/embed/' + link
-           addLink2(name,finalurl,4,thumbnail)
+           addLink2(name,finalurl,4,desc,thumbnail,title)
 
 
 #Зареждане на видео
@@ -142,12 +142,12 @@ def addLink(name,url,mode,iconimage):
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
 
-def addLink2(name,url,mode,iconimage):
+def addLink2(name,url,mode,plot,iconimage,title):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
         ok=True
-        liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+        liz=xbmcgui.ListItem(title, iconImage=iconimage, thumbnailImage=iconimage)
         liz.setArt({ 'thumb': iconimage,'poster': iconimage, 'banner' : iconimage, 'fanart': iconimage })
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
+        liz.setInfo( type="Video", infoLabels={ "Title": name, "plot":plot  } )
         liz.setProperty("IsPlayable" , "false")
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
         return ok
