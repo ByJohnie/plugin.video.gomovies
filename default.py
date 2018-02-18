@@ -47,7 +47,7 @@ def INDEXPAGES(url):
 
         #Начало на обхождането
         br = 0 #Брояч на видеата в страницата - 24 за този сайт
-        match = re.compile('<a href="(.+?)".+?title="(.+?)".*\s+.*\s+.*original="(.+?)"').findall(data)
+        match = re.compile('<a href="(.+?)".+?title="(.+?)".*\s+.*\s+.+?original="(.+?)"').findall(data)
         for vid,title,thumbnail in match:
             #print thumbnail
             #print title
