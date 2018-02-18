@@ -1,3 +1,5 @@
+1.0.3
+нов домейн
 1.0.2
 fixed title for better finding subtitles
 fixd description to show
