@@ -19,10 +19,10 @@ UA = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40
 
 #Меню с директории в приставката
 def CATEGORIES():
-        addDir('Search','https://gomovies.sc/browse-word/',2,searchicon)
-        addDir('All Movies','https://gomovies.sc/movies/',1,folder)
-        addDir('TV-Series','https://gomovies.sc/tv-series/',1,folder)
-        baseurl = 'https://gomovies.sc/'
+        addDir('Search','https://gomovieshub.sc/browse-word/',2,searchicon)
+        addDir('All Movies','https://gomovieshub.sc/movies/',1,folder)
+        addDir('TV-Series','https://gomovieshub.sc/tv-series/',1,folder)
+        baseurl = 'https://gomovieshub.sc/'
         req = urllib2.Request(baseurl)
         req.add_header('User-Agent', UA)
         response = urllib2.urlopen(req)
