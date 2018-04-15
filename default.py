@@ -19,10 +19,10 @@ UA = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40
 
 #Меню с директории в приставката
 def CATEGORIES():
-        addDir('Search','https://gomovieshub.sc/browse-word/',2,searchicon)
-        addDir('All Movies','https://gomovieshub.sc/movies/',1,folder)
-        addDir('TV-Series','https://gomovieshub.sc/tvseries/',1,folder)
-        baseurl = 'https://gomovieshub.sc/'
+        addDir('Search','https://www1.gomovies.sc//browse-word/',2,searchicon)
+        addDir('All Movies','https://www1.gomovies.sc//movies/',1,folder)
+        addDir('TV-Series','https://www1.gomovies.sc//tvseries/',1,folder)
+        baseurl = 'https://www1.gomovies.sc/'
         req = urllib2.Request(baseurl)
         req.add_header('User-Agent', UA)
         response = urllib2.urlopen(req)
@@ -47,7 +47,7 @@ def INDEXPAGES(url):
 
         #Начало на обхождането
         br = 0 #Брояч на видеата в страницата - 24 за този сайт
-        match = re.compile('<a href="(.+?)".*title="(.+?)".*\n.*\n.*\n.*\n.*original="(.+?)"').findall(data)
+        match = re.compile('<a href="(.+?)".*title="(.+?)".*\n.*\n.*src="(.+?)"').findall(data)
         for vid,title,thumbnail in match:
             #print thumbnail
             #print title
@@ -105,6 +105,11 @@ def SHOW(url):
           for desc in matchd:
            finalurl = 'https://openload.co/embed/' + link
            addLink2(name,finalurl,4,desc,thumbnail,title)
+           match = re.compile('<a title="(.+?)".*data-strgo="(.+?)"').findall(data2)
+           for tit2,link2 in match:
+            title = name + '-КАЧЕСТВО/СЕРИЯ-' + tit2 + ' STREAMGO'
+            finalurl2 = 'https://streamgo.me/player/' + link2
+            addLink2(name,finalurl2,4,desc,thumbnail,title)    
 
 
 #Зареждане на видео
