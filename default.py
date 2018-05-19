@@ -11,6 +11,7 @@ import urlparse
 #Място за дефиниране на константи, които ще се използват няколкократно из отделните модули
 __addon_id__= 'plugin.video.gomovies'
 __Addon = xbmcaddon.Addon(__addon_id__)
+domain = xbmcaddon.Addon().getSetting('domain')
 searchicon = xbmc.translatePath(__Addon.getAddonInfo('path') + "/resources/search.png")
 folder = xbmc.translatePath(__Addon.getAddonInfo('path') + "/resources/folder.png")
 MUA = 'Mozilla/5.0 (Linux; Android 5.0.2; bg-bg; SAMSUNG GT-I9195 Build/JDQ39) AppleWebKit/535.19 (KHTML, like Gecko) Version/1.0 Chrome/18.0.1025.308 Mobile Safari/535.19' #За симулиране на заявка от мобилно устройство
@@ -19,10 +20,10 @@ UA = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40
 
 #Меню с директории в приставката
 def CATEGORIES():
-        addDir('Search','https://www1.gomovies.sc//browse-word/',2,searchicon)
-        addDir('All Movies','https://www1.gomovies.sc//movies/',1,folder)
-        addDir('TV-Series','https://www1.gomovies.sc//tvseries/',1,folder)
-        baseurl = 'https://www1.gomovies.sc/'
+        addDir('Search',domain+'browse-word/',2,searchicon)
+        addDir('All Movies',domain+'movies/',1,folder)
+        addDir('TV-Series',domain+'tvseries/',1,folder)
+        baseurl = domain
         req = urllib2.Request(baseurl)
         req.add_header('User-Agent', UA)
         response = urllib2.urlopen(req)
@@ -32,6 +33,7 @@ def CATEGORIES():
         match = re.compile('<li><a href="(.+?)" title="(.+?)">.+?</a></li>').findall(data)
         for link, title in match:
          thumbnail = folder
+         title = title.replace('&amp;','')
          addDir(title,link,1,thumbnail)
          cr = cr + 1
 
@@ -51,6 +53,7 @@ def INDEXPAGES(url):
         for vid,title,thumbnail in match:
             #print thumbnail
             #print title
+            title = title.replace('&amp;','')
             addLink(title,vid,3,thumbnail)
             br = br + 1
             print 'Items counter: ' + str(br)
@@ -96,20 +99,49 @@ def SHOW(url):
         response = urllib2.urlopen(req)
         data2=response.read()
         response.close()
-        match = re.compile('<a title="(.+?)".*data-openload="(.+?)"').findall(data2)
-        for tit,link in match:
-         title = name + '-КАЧЕСТВО/СЕРИЯ-' + tit
-         matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data2)
-         for thumbnail in matchi:
-          matchd = re.compile('<div class="desc">\n(.*)\.').findall(data2)
-          for desc in matchd:
-           finalurl = 'https://openload.co/embed/' + link
-           addLink2(name,finalurl,4,desc,thumbnail,title)
-           match = re.compile('<a title="(.+?)".*data-strgo="(.+?)"').findall(data2)
-           for tit2,link2 in match:
-            title = name + '-КАЧЕСТВО/СЕРИЯ-' + tit2 + ' STREAMGO'
-            finalurl2 = 'https://streamgo.me/player/' + link2
-            addLink2(name,finalurl2,4,desc,thumbnail,title)    
+        
+        match1 = re.compile('<li itemtype=.*\n<span itemprop="name">(.+?)</span>').findall(data2)
+        for name in match1:
+         print name       
+         if 'Season' in name:
+          if 'data-strgo="' in data2:
+           addDir('STREAMGOLINKS',urlfind,5,'DefaultFolder.png')
+          else:
+           print 'NO STREAMGO LINKS IN SERIES'       
+          matchn = re.compile('(.+?) - Season (\d+)').findall(name)
+          for realname,seasonnumb in matchn:
+           print realname
+           print seasonnumb
+           match = re.compile('<a title="(.+?)".*data-openload="(.+?)"').findall(data2)
+           for tit,link in match:
+            matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data2)
+            for thumbnail in matchi:
+             matchd = re.compile('<div class="desc">\n(.*)\.').findall(data2)
+             for desc in matchd:
+              finalurl = 'https://openload.co/embed/' + link
+              matcht = re.compile('Episode (\d+)').findall(tit)
+              for enumber in matcht:
+               title = realname + ' ' + tit
+               print title
+               name = realname + ' ' + seasonnumb.zfill(2) + 'x' + enumber
+               print name
+               addLink2(name,finalurl,4,desc,thumbnail,title)
+                           
+         else:      
+          match = re.compile('<a title="(.+?)".*data-openload="(.+?)"').findall(data2)
+          for tit,link in match:
+           title = name + ' ' + tit
+           matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data2)
+           for thumbnail in matchi:
+            matchd = re.compile('<div class="desc">\n(.*)\.').findall(data2)
+            for desc in matchd:
+             finalurl = 'https://openload.co/embed/' + link
+             addLink2(name,finalurl,4,desc,thumbnail,title)
+             match = re.compile('<a title="(.+?)".*data-strgo="(.+?)"').findall(data2)
+             for tit2,link2 in match:
+              title = name + ' ' + tit2 + ' STREAMGO'
+              finalurl2 = 'https://streamgo.me/player/' + link2
+              addLink2(name,finalurl2,4,desc,thumbnail,title)    
 
 
 #Зареждане на видео
@@ -133,7 +165,34 @@ def PLAY(url):
         try: _addon.resolve_url(stream_url)
         except: t=''
 
-
+def SHOWSTREAMGO(url):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', UA)
+        response = urllib2.urlopen(req)
+        data2=response.read()
+        response.close()
+        match1 = re.compile('<li itemtype=.*\n<span itemprop="name">(.+?)</span>').findall(data2)
+        for name in match1:
+         print name       
+         if 'Season' in name:
+          matchn = re.compile('(.+?) - Season (\d+)').findall(name)
+          for realname,seasonnumb in matchn:
+           print realname
+           print seasonnumb
+           match = re.compile('<a title="(.+?)".*data-strgo="(\w+)').findall(data2)
+           for tit,link in match:
+            matchi = re.compile('<img title=.*src="(.+?)" class="hidden">').findall(data2)
+            for thumbnail in matchi:
+             matchd = re.compile('<div class="desc">\n(.*)\.').findall(data2)
+             for desc in matchd:
+              finalurl = 'https://streamgo.me/player/' + link
+              matcht = re.compile('Episode (\d+)').findall(tit)
+              for enumber in matcht:
+               title = realname + ' ' + tit
+               print title
+               name = realname + ' ' + seasonnumb.zfill(2) + 'x' + enumber
+               print name
+               addLink2(name,finalurl,4,desc,thumbnail,title)   
 
 
 #Модул за добавяне на отделно заглавие и неговите атрибути към съдържанието на показваната в Kodi директория - НЯМА НУЖДА ДА ПРОМЕНЯТЕ НИЩО ТУК
@@ -243,5 +302,9 @@ elif mode==3:
 elif mode==4:
         print ""+url
         PLAY(url)
+
+elif mode==5:
+        print ""+url
+        SHOWSTREAMGO(url)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
